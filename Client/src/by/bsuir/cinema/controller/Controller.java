@@ -1,5 +1,6 @@
 package by.bsuir.cinema.controller;
 
+import by.bsuir.cinema.entity.user.User;
 import by.bsuir.cinema.logic.SignInLogic;
 import by.bsuir.cinema.util.Encryption;
 import by.bsuir.cinema.util.constant.ConstantMessages;
@@ -13,7 +14,7 @@ public class Controller {
 
     private JPanel authorizationPanel;
     private JButton signIn;
-    private JLabel authorization;
+    private JLabel signInLogic;
     private JLabel login;
     private JLabel password;
 
@@ -31,22 +32,26 @@ public class Controller {
 
     public Controller(JFrame authorizationFrame) {
         signIn.addActionListener(e -> {
-            switch (SignInLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()))) {
-                case "admin":
-                    authorizationFrame.dispose();
-                    //openAdminMenu();
-                    break;
-                case "user":
-                    authorizationFrame.dispose();
-                    //openUserMenu();
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(null,
-                            "Отсутствует пользователь с таким логином или паролем");
-                    break;
+            User user = SignInLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
+            if (user != null) {
+                switch (user.getType()) {
+                    case ADMIN:
+                        authorizationFrame.dispose();
+                        //openAdminMenu();
+                        break;
+                    case CLIENT:
+                        authorizationFrame.dispose();
+                        //openUserMenu();
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null,
+                                "Ошибка");
+                        break;
+                }
+            } else {
+                JOptionPane.showMessageDialog(null,
+                        "Такого пользователя нет");
             }
-
-
         });
     }
 }

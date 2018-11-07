@@ -1,7 +1,6 @@
 package by.bsuir.cinema.entity.user;
 
 import by.bsuir.cinema.entity.Entity;
-
 import java.util.Objects;
 
 public class User extends Entity {
@@ -10,12 +9,8 @@ public class User extends Entity {
 
     public User(){super();}
 
-    public User(int id, String login){
+    public User(int id, String login, TypeUser type){
         super(id);
-        this.login = login;
-    }
-
-    public User(String login, TypeUser type){
         this.login = login;
         this.type = type;
     }

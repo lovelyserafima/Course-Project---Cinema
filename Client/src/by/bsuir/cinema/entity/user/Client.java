@@ -10,17 +10,8 @@ public class Client extends User {
         super();
     }
 
-    public Client(BigDecimal money) {
-        this.money = money;
-    }
-
-    public Client(int id, String login, BigDecimal money) {
-        super(id, login);
-        this.money = money;
-    }
-
-    public Client(String login, TypeUser type, BigDecimal money) {
-        super(login, type);
+    public Client(int id, String login, BigDecimal money, TypeUser type) {
+        super(id, login, type);
         this.money = money;
     }
 
