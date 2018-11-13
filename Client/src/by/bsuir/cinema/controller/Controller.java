@@ -1,7 +1,8 @@
 package by.bsuir.cinema.controller;
 
 import by.bsuir.cinema.entity.user.User;
-import by.bsuir.cinema.logic.SignInLogic;
+import by.bsuir.cinema.logic.UserLogic;
+import by.bsuir.cinema.jframe.UserMenuFrame;
 import by.bsuir.cinema.util.Encryption;
 import by.bsuir.cinema.util.constant.ConstantMessages;
 import javax.swing.*;
@@ -17,7 +18,6 @@ public class Controller {
     private JLabel signInLogic;
     private JLabel login;
     private JLabel password;
-
     private JTextField loginText;
     private JPasswordField passwordField;
 
@@ -32,7 +32,7 @@ public class Controller {
 
     public Controller(JFrame authorizationFrame) {
         signIn.addActionListener(e -> {
-            User user = SignInLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
+            User user = UserLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
             if (user != null) {
                 switch (user.getType()) {
                     case ADMIN:
@@ -41,7 +41,7 @@ public class Controller {
                         break;
                     case CLIENT:
                         authorizationFrame.dispose();
-                        //openUserMenu();
+                        openUserMenu();
                         break;
                     default:
                         JOptionPane.showMessageDialog(null,
@@ -53,5 +53,24 @@ public class Controller {
                         "Такого пользователя нет");
             }
         });
+    }
+
+    /*private void openAdminMenu() {
+        JFrame frame = new JFrame("Меню администратора");
+        frame.setBounds(650, 300, 15000, 300);
+        frame.setContentPane(new AdminMenuFrame(frame).adminMenu);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+        new Thread(new AdminMenu(frame)).start();
+    }*/
+
+    private void openUserMenu() {
+        JFrame frame = new JFrame("Меню пользователя");
+        frame.setBounds(650, 300, 15000, 300);
+        frame.setContentPane(new UserMenuFrame(frame).userMenu);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
     }
 }

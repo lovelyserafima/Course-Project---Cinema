@@ -5,7 +5,7 @@ import by.bsuir.cinema.database.dao.UserDao;
 import by.bsuir.cinema.entity.user.User;
 import by.bsuir.cinema.exception.ProjectException;
 
-public class SignInLogic {
+public class UserLogic {
     public static User findUser(String login, String password)  {
         DaoManager daoManager = new DaoManager();
         UserDao userDao = new UserDao();
