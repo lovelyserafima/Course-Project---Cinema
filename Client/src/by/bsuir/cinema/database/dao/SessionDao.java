@@ -1,47 +1,30 @@
 package by.bsuir.cinema.database.dao;
 
-import by.bsuir.cinema.entity.Session;
-import by.bsuir.cinema.entity.user.Client;
-import by.bsuir.cinema.entity.user.TypeUser;
-import by.bsuir.cinema.entity.user.User;
-import by.bsuir.cinema.exception.ProjectException;
-import by.bsuir.cinema.util.constant.ConstantFields;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.sql.Statement;
 
 public class SessionDao extends AbstractDao {
-    private static final String FIND_ALL_SESSIONS = "select "
-    public List<Session> findAllSession(int id){
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = connection.prepareStatement(FIND_USER_BY_LOGIN_AND_PASSWORD);
-            preparedStatement.setString(1, login);
-            preparedStatement.setString(2, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()){
-                if (resultSet.getString(4).toUpperCase().equals(ConstantFields.ADMIN)){
-                    return new User(resultSet.getInt(1), resultSet.getString(2),
-                            TypeUser.valueOf(resultSet.getString(4).toUpperCase()));
-                } else {
-                    PreparedStatement preparedStatementForClient = connection.prepareStatement(FIND_CLIENT_BY_ID);
-                    preparedStatementForClient.setInt(1, resultSet.getInt(1));
-                    ResultSet resultSetForClient = preparedStatementForClient.executeQuery();
-                    if (resultSetForClient.next()){
-                        return new Client(resultSet.getInt(1), resultSet.getString(2),
-                                resultSetForClient.getBigDecimal(2),
-                                TypeUser.valueOf(resultSet.getString(4).toUpperCase()));
-                    }
-                }
+    private static final String FIND_ALL_SESSIONS = "select Session.id, name, genre, producers, main_roles, date_time, " +
+            "price from Session join Film on film_id = Film.id";
+
+    public String findAllSessions(){
+        String allSessions = "";
+        Statement statement = null;
+        try{
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(FIND_ALL_SESSIONS);
+            while (resultSet.next()){
+                allSessions += resultSet.getInt(1) + " Название фильма - " +
+                        resultSet.getString(2) + "\nЖанр - " + resultSet.getString(3) +
+                        "\nРежиссеры " + resultSet.getString(4) + "\nВ главных ролях " +
+                        resultSet.getString(5) + "\nВремя " + resultSet.getString(6) +
+                        "\nЦена в синемакоинах " + resultSet.getString(7) + "\n";
             }
         } catch (SQLException e) {
-            throw new ProjectException("SQLException", e);
-        } finally {
-            if (connection != null){
-                close(preparedStatement);
-            }
+            e.printStackTrace();
         }
-        return null;
+        return allSessions;
     }
+
 }

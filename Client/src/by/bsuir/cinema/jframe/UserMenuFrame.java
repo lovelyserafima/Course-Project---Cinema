@@ -1,5 +1,7 @@
 package by.bsuir.cinema.jframe;
 
+import by.bsuir.cinema.exception.ProjectException;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,7 +12,7 @@ import java.net.Socket;
 
 public class UserMenuFrame {
     public JPanel userMenu;
-    private JButton buyTicket;
+    private JButton affiche;
     private JButton basket;
     private JButton exit;
     public JFrame frame;
@@ -20,10 +22,14 @@ public class UserMenuFrame {
 
     public UserMenuFrame(JFrame frame) {
         this.frame=frame;
-        buyTicket.addActionListener(new ActionListener() {
+        affiche.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                buyTicket(frame,output);
+                try {
+                    openAffice(frame,output);
+                } catch (ProjectException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
@@ -57,10 +63,10 @@ public class UserMenuFrame {
         }
     }
 
-    private void buyTicket(JFrame frame, ObjectOutputStream output) {
+    private void openAffice(JFrame frame, ObjectOutputStream output) throws ProjectException {
         JFrame ticketFrame = new JFrame("Покупка билета");
         frame.setBounds(650, 300, 15000, 300);
-        frame.setContentPane(new BuyTicketFrame(ticketFrame).getPanel);
+        frame.setContentPane(new AfficheFrame(ticketFrame).getPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

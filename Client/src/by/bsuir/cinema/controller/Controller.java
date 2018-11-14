@@ -12,6 +12,7 @@ public class Controller {
     private static final int Y = 300;
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 300;
+    public static User user;
 
     private JPanel authorizationPanel;
     private JButton signIn;
@@ -32,7 +33,7 @@ public class Controller {
 
     public Controller(JFrame authorizationFrame) {
         signIn.addActionListener(e -> {
-            User user = UserLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
+            user = UserLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
             if (user != null) {
                 switch (user.getType()) {
                     case ADMIN:
