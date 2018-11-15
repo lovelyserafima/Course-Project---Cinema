@@ -1,37 +1,37 @@
 package by.bsuir.cinema.jframe;
 
+import by.bsuir.cinema.entity.user.Client;
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.BasketLogic;
 import by.bsuir.cinema.logic.SessionLogic;
-import static by.bsuir.cinema.controller.Controller.user;
 import javax.swing.*;
-import java.io.ObjectOutputStream;
+import static by.bsuir.cinema.controller.Controller.user;
 
-public class AfficheFrame {
+public class BasketFrame {
+    private JTextArea orders;
     public JPanel getPanel;
     public JFrame frame;
-    private JLabel sessions;
+    private JLabel yourOrders;
     private JButton back;
-    private JTextArea Tickets;
-    private JButton addToBasket;
+    private JButton buyTicket;
     private JTextField sessionId;
-    static private ObjectOutputStream output;
+    private JButton cancelOrder;
 
-    public AfficheFrame(JFrame frame) throws ProjectException {
+    public BasketFrame(JFrame frame) throws ProjectException {
         //JFrame
         this.frame = frame;
-        Tickets.removeAll();
-        Tickets.append(SessionLogic.findAllSessions());
+        orders.removeAll();
+        orders.append(BasketLogic.findAllSessionOfUser(user.getId()));
 
-        addToBasket.addActionListener(e -> {
+        buyTicket.addActionListener(e -> {
             try {
-                boolean flag = BasketLogic.addToBasket(user.getId(), Integer.parseInt(sessionId.getText()));
-                if (flag){
+                if (BasketLogic.isEnoughMoney(((Client) user).getMoney(), Integer.parseInt(sessionId.getText()))){
+
                     JOptionPane.showMessageDialog(null,
                             "Билет был успешно добавлен в корзину");
                 } else {
                     JOptionPane.showMessageDialog(null,
-                            "Упс, что-то пошло не так");
+                            "У вас недостаточно денег: пополните счет");
                 }
             } catch (ProjectException e1) {
                 e1.printStackTrace();

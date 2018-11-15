@@ -1,5 +1,7 @@
 package by.bsuir.cinema.database.dao;
 
+import by.bsuir.cinema.exception.ProjectException;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -8,7 +10,11 @@ public class SessionDao extends AbstractDao {
     private static final String FIND_ALL_SESSIONS = "select Session.id, name, genre, producers, main_roles, date_time, " +
             "price from Session join Film on film_id = Film.id";
 
-    public String findAllSessions(){
+    /*select Session.id, name, genre, producers, main_roles, date_time, price from
+    Film join Session on film_id = Film.id join Basket
+    on Session.id = Basket.session_id where Basket.user_id = 3*/
+
+    public String findAllSessions() throws ProjectException {
         String allSessions = "";
         Statement statement = null;
         try{
@@ -23,6 +29,10 @@ public class SessionDao extends AbstractDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connection != null){
+                close(statement);
+            }
         }
         return allSessions;
     }

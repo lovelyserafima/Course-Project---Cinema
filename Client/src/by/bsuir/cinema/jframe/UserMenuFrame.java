@@ -26,30 +26,28 @@ public class UserMenuFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    openAffice(frame,output);
+                    openAffice();
                 } catch (ProjectException e1) {
                     e1.printStackTrace();
                 }
             }
         });
 
-        basket.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showBasket(frame, output);
+        basket.addActionListener(e -> {
+            try {
+                showBasket();
+            } catch (ProjectException e1) {
+                e1.printStackTrace();
             }
         });
 
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    connection.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                frame.dispose();
+        exit.addActionListener(e -> {
+            try {
+                connection.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
+            frame.dispose();
         });
     }
 
@@ -63,23 +61,23 @@ public class UserMenuFrame {
         }
     }
 
-    private void openAffice(JFrame frame, ObjectOutputStream output) throws ProjectException {
+    private void openAffice() throws ProjectException {
         JFrame ticketFrame = new JFrame("Покупка билета");
-        frame.setBounds(650, 300, 15000, 300);
-        frame.setContentPane(new AfficheFrame(ticketFrame).getPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+        ticketFrame.setBounds(650, 300, 15000, 300);
+        ticketFrame.setContentPane(new AfficheFrame(ticketFrame).getPanel);
+        ticketFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ticketFrame.pack();
+        ticketFrame.setVisible(true);
     }
 
-    private void showBasket(JFrame frame, ObjectOutputStream output) {
-        /*JFrame removeOrAddMenu = new JFrame("Получение графика");
-        removeOrAddMenu.setBounds(650, 300, 1000, 300);
-        removeOrAddMenu.setContentPane(new GetGraphics(frame, removeOrAddMenu, output, this).getGraphicPanel);
-        removeOrAddMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        removeOrAddMenu.pack();
-        removeOrAddMenu.setVisible(true);
-        frame.setVisible(false);*/
+    private void showBasket() throws ProjectException {
+        JFrame basketFrame = new JFrame("Корзина");
+        basketFrame.setBounds(650, 300, 1000, 300);
+        basketFrame.setContentPane(new BasketFrame(basketFrame).getPanel);
+        basketFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        basketFrame.pack();
+        basketFrame.setVisible(true);
+        frame.setVisible(false);
     }
 
     /*@Override

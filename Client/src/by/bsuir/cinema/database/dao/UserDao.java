@@ -5,6 +5,8 @@ import by.bsuir.cinema.entity.user.TypeUser;
 import by.bsuir.cinema.entity.user.User;
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.util.constant.ConstantFields;
+
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +14,7 @@ import java.sql.SQLException;
 public class UserDao extends AbstractDao {
     private static final String FIND_USER_BY_LOGIN_AND_PASSWORD = "select * from User where login = ? and password = ?";
     private static final String FIND_CLIENT_BY_ID = "select * from Client where user_id = ?";
+    private static final String UPDATE_CLIENT_MONEY = "update Money set cash = ? where user_id = ?";
 
     public User findUserByLoginAndPassword(String login, String password) throws ProjectException {
         PreparedStatement preparedStatement = null;
@@ -43,5 +46,12 @@ public class UserDao extends AbstractDao {
             }
         }
         return null;
+    }
+
+    public boolean updateUserMoney(int userId, int sessionId, BigDecimal userBalance){
+        PreparedStatement preparedStatement = null;
+        try{
+
+        }
     }
 }
