@@ -10,19 +10,20 @@ import java.io.ObjectOutputStream;
 public class AfficheFrame {
     public JPanel getPanel;
     public JFrame frame;
-    private JLabel sessions;
+    private JLabel ourSessions;
     private JButton back;
-    private JTextArea Tickets;
+    //private JTextArea Tickets;
     private JButton addToBasket;
+    private JTextArea textArea1;
     private JTextField sessionId;
+    private JTextField sessions;
     static private ObjectOutputStream output;
 
     public AfficheFrame(JFrame frame) throws ProjectException {
         //JFrame
         this.frame = frame;
-        Tickets.removeAll();
-        Tickets.append(SessionLogic.findAllSessions());
-
+        textArea1.removeAll();
+        textArea1.append(SessionLogic.findAllSessions());
         addToBasket.addActionListener(e -> {
             try {
                 boolean flag = BasketLogic.addToBasket(user.getId(), Integer.parseInt(sessionId.getText()));

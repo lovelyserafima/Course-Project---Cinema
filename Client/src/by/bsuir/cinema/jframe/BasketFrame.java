@@ -3,8 +3,9 @@ package by.bsuir.cinema.jframe;
 import by.bsuir.cinema.entity.user.Client;
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.BasketLogic;
-import by.bsuir.cinema.logic.SessionLogic;
+
 import javax.swing.*;
+
 import static by.bsuir.cinema.controller.Controller.user;
 
 public class BasketFrame {
@@ -25,16 +26,34 @@ public class BasketFrame {
 
         buyTicket.addActionListener(e -> {
             try {
-                if (BasketLogic.isEnoughMoney(((Client) user).getMoney(), Integer.parseInt(sessionId.getText()))){
-
+                int integerSessionId = Integer.parseInt(sessionId.getText());
+                if (BasketLogic.isEnoughMoney(((Client) user).getMoney(), integerSessionId)){
+                    ((Client) user).setMoney(BasketLogic.buyTicket(user.getId(), integerSessionId,
+                            ((Client) user).getMoney()));
                     JOptionPane.showMessageDialog(null,
-                            "Билет был успешно добавлен в корзину");
+                            "Билет был успешно куплен");
+                    BasketLogic.deleteFromBasket(user.getId(), integerSessionId);
+                    openUserMenu(this.frame);
                 } else {
                     JOptionPane.showMessageDialog(null,
                             "У вас недостаточно денег: пополните счет");
                 }
             } catch (ProjectException e1) {
-                e1.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Упс, что-то пошло не так:(");
+            }
+        });
+
+        cancelOrder.addActionListener(e -> {
+            int integerSessionId = Integer.parseInt(sessionId.getText());
+            try {
+                if (BasketLogic.deleteFromBasket(user.getId(), integerSessionId)){
+                    JOptionPane.showMessageDialog(null, "Билет был успешно отменен");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
+                }
+            } catch (ProjectException e1) {
+                JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
             }
         });
 

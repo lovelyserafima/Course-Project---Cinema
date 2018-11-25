@@ -14,7 +14,9 @@ import java.sql.SQLException;
 public class UserDao extends AbstractDao {
     private static final String FIND_USER_BY_LOGIN_AND_PASSWORD = "select * from User where login = ? and password = ?";
     private static final String FIND_CLIENT_BY_ID = "select * from Client where user_id = ?";
-    private static final String UPDATE_CLIENT_MONEY = "update Money set cash = ? where user_id = ?";
+    private static final String FIND_SESSION_PRICE = "select price from Session join Basket on session_id = id where " +
+            "session_id = ?";
+    private static final String UPDATE_CLIENT_MONEY = "update Client set cash = ? where user_id = ?";
 
     public User findUserByLoginAndPassword(String login, String password) throws ProjectException {
         PreparedStatement preparedStatement = null;
@@ -48,10 +50,48 @@ public class UserDao extends AbstractDao {
         return null;
     }
 
-    public boolean updateUserMoney(int userId, int sessionId, BigDecimal userBalance){
+    public boolean updateUserMoney(BigDecimal value, Client client) throws ProjectException {
         PreparedStatement preparedStatement = null;
+        boolean flag;
         try{
-
+            preparedStatement = connection.prepareStatement(UPDATE_CLIENT_MONEY);
+            BigDecimal newBalance = BigDecimal.valueOf(client.getMoney().doubleValue() + value.doubleValue());
+            preparedStatement.setBigDecimal(1, newBalance);
+            preparedStatement.setInt(2, client.getId());
+            flag = preparedStatement.executeUpdate() != 0;
+            client.setMoney(newBalance);
+        } catch (SQLException e) {
+            throw new ProjectException("UpdateUserMoneyException", e);
+        } finally {
+            if (connection != null){
+                close(preparedStatement);
+            }
         }
+        return flag;
+    }
+
+    public BigDecimal updateUserMoney(int userId, int sessionId, BigDecimal userBalance) throws ProjectException {
+        PreparedStatement preparedStatement = null;
+        BigDecimal newBalance = BigDecimal.valueOf(-1);
+        try{
+            preparedStatement = connection.prepareStatement(FIND_SESSION_PRICE);
+            preparedStatement.setInt(1, sessionId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                BigDecimal sessionPrice = resultSet.getBigDecimal(1);
+                preparedStatement = connection.prepareStatement(UPDATE_CLIENT_MONEY);
+                newBalance = BigDecimal.valueOf(userBalance.doubleValue() - sessionPrice.doubleValue());
+                preparedStatement.setBigDecimal(1, newBalance);
+                preparedStatement.setInt(2, userId);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new ProjectException("UpdateUserMoneyException", e);
+        } finally {
+            if (connection != null){
+                close(preparedStatement);
+            }
+        }
+        return newBalance;
     }
 }

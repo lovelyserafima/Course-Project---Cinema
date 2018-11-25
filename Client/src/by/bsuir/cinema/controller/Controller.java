@@ -1,6 +1,7 @@
 package by.bsuir.cinema.controller;
 
 import by.bsuir.cinema.entity.user.User;
+import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.UserLogic;
 import by.bsuir.cinema.jframe.UserMenuFrame;
 import by.bsuir.cinema.util.Encryption;
@@ -33,25 +34,29 @@ public class Controller {
 
     public Controller(JFrame authorizationFrame) {
         signIn.addActionListener(e -> {
-            user = UserLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
-            if (user != null) {
-                switch (user.getType()) {
-                    case ADMIN:
-                        authorizationFrame.dispose();
-                        //openAdminMenu();
-                        break;
-                    case CLIENT:
-                        authorizationFrame.dispose();
-                        openUserMenu();
-                        break;
-                    default:
-                        JOptionPane.showMessageDialog(null,
-                                "Ошибка");
-                        break;
+            try {
+                user = UserLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
+                if (user != null) {
+                    switch (user.getType()) {
+                        case ADMIN:
+                            authorizationFrame.dispose();
+                            //openAdminMenu();
+                            break;
+                        case CLIENT:
+                            authorizationFrame.dispose();
+                            openUserMenu();
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null,
+                                    "Ошибка");
+                            break;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                            "Такого пользователя нет");
                 }
-            } else {
-                JOptionPane.showMessageDialog(null,
-                        "Такого пользователя нет");
+            } catch (ProjectException e1) {
+                JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
             }
         });
     }
