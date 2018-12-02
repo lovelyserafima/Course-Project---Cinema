@@ -1,11 +1,12 @@
-package by.bsuir.cinema.jframe;
+package by.bsuir.cinema.jframe.client;
 
 import by.bsuir.cinema.entity.user.Client;
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.UserLogic;
 
 import javax.swing.*;
-import static by.bsuir.cinema.controller.Controller.user;
+import static by.bsuir.cinema.controller.Starter.user;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,6 +32,7 @@ public class UserMenuFrame {
         balance.setText("Ваш баланс = " + ((Client) user).getMoney());
         affiche.addActionListener(e -> {
             try {
+                this.frame.dispose();
                 openAffice();
             } catch (ProjectException e1) {
                 e1.printStackTrace();
@@ -39,6 +41,7 @@ public class UserMenuFrame {
 
         basket.addActionListener(e -> {
             try {
+                this.frame.dispose();
                 showBasket();
             } catch (ProjectException e1) {
                 e1.printStackTrace();
@@ -46,11 +49,12 @@ public class UserMenuFrame {
         });
 
         tickets.addActionListener(e -> {
+            this.frame.dispose();
             showTickets();
         });
 
         topUp.addActionListener(e -> {
-            boolean flag = false;
+            boolean flag;
             try {
                 flag = UserLogic.updateUserMoney(BigDecimal.valueOf(Double.parseDouble(value.getText())),
                         (Client) user);
@@ -68,11 +72,11 @@ public class UserMenuFrame {
 
 
         exit.addActionListener(e -> {
-            try {
+            /*try {
                 connection.close();
             } catch (IOException e1) {
                 e1.printStackTrace();
-            }
+            }*/
             frame.dispose();
         });
     }
@@ -125,6 +129,10 @@ public class UserMenuFrame {
         newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         newFrame.pack();
         newFrame.setVisible(true);
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 
 

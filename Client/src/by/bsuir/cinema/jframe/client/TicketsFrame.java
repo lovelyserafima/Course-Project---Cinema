@@ -1,8 +1,8 @@
-package by.bsuir.cinema.jframe;
+package by.bsuir.cinema.jframe.client;
 
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.TicketsLogic;
-import static by.bsuir.cinema.controller.Controller.user;
+import static by.bsuir.cinema.controller.Starter.user;
 import javax.swing.*;
 
 public class TicketsFrame {

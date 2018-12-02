@@ -2,17 +2,14 @@ package by.bsuir.cinema.database.dao;
 
 import by.bsuir.cinema.exception.ProjectException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.math.BigDecimal;
+import java.sql.*;
 
 public class SessionDao extends AbstractDao {
     private static final String FIND_ALL_SESSIONS = "select Session.id, name, genre, producers, main_roles, date_time, " +
             "price from Session join Film on film_id = Film.id";
-
-    /*select Session.id, name, genre, producers, main_roles, date_time, price from
-    Film join Session on film_id = Film.id join Basket
-    on Session.id = Basket.session_id where Basket.user_id = 3*/
+    private static final String INSERT_SESSION = "insert into Session(film_id, date_time, price) values(?, ?, ?)";
+    private static final String DELETE_FROM_SESSION = "delete from Session where id = ?";
 
     public String findAllSessions() throws ProjectException {
         String allSessions = "";
@@ -21,11 +18,11 @@ public class SessionDao extends AbstractDao {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(FIND_ALL_SESSIONS);
             while (resultSet.next()){
-                allSessions += resultSet.getInt(1) + " Название фильма - " +
-                        resultSet.getString(2) + ", Жанр - " + resultSet.getString(3) +
-                        ", Режиссеры " + resultSet.getString(4) + ", В главных ролях " +
-                        resultSet.getString(5) + " Время " + resultSet.getString(6) +
-                        ", Цена в синемакоинах " + resultSet.getString(7) + "\n";
+                allSessions += resultSet.getInt(1) + "\n Название фильма - " +
+                        resultSet.getString(2) + ", \nЖанр - " + resultSet.getString(3) +
+                        ", \nРежиссеры " + resultSet.getString(4) + ", \nВ главных ролях " +
+                        resultSet.getString(5) + " \nВремя " + resultSet.getString(6) +
+                        ", \nЦена в синемакоинах " + resultSet.getString(7) + "\n";
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -35,6 +32,42 @@ public class SessionDao extends AbstractDao {
             }
         }
         return allSessions;
+    }
+
+    public boolean insertSession(int filmId, String dateAndTime, String cost) throws ProjectException {
+        PreparedStatement preparedStatement = null;
+        boolean flag;
+        try{
+            preparedStatement = connection.prepareStatement(INSERT_SESSION);
+            preparedStatement.setInt(1, filmId);
+            preparedStatement.setDate(2, Date.valueOf(dateAndTime));
+            preparedStatement.setBigDecimal(3, BigDecimal.valueOf(Double.parseDouble(cost)));
+            flag = preparedStatement.executeUpdate() != 0;
+        } catch (SQLException e) {
+            throw new ProjectException("SQLException, ", e);
+        } finally {
+            if (connection != null){
+                close(preparedStatement);
+            }
+        }
+        return flag;
+    }
+
+    public boolean deleteById(int sessionId) throws ProjectException {
+        PreparedStatement preparedStatement = null;
+        boolean flag;
+        try{
+            preparedStatement = connection.prepareStatement(DELETE_FROM_SESSION);
+            preparedStatement.setInt(1, sessionId);
+            flag = preparedStatement.executeUpdate() != 0;
+        } catch (SQLException e) {
+            throw new ProjectException("SQLException, ", e);
+        } finally {
+            if (connection != null){
+                close(preparedStatement);
+            }
+        }
+        return flag;
     }
 
 }

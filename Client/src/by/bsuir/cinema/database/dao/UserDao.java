@@ -26,7 +26,7 @@ public class UserDao extends AbstractDao {
             preparedStatement.setString(2, password);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()){
-                if (resultSet.getString(4).toUpperCase().equals(ConstantFields.ADMIN)){
+                if (resultSet.getString(4).equals(ConstantFields.ADMIN)){
                     return new User(resultSet.getInt(1), resultSet.getString(2),
                             TypeUser.valueOf(resultSet.getString(4).toUpperCase()));
                 } else {

@@ -2,13 +2,14 @@ package by.bsuir.cinema.controller;
 
 import by.bsuir.cinema.entity.user.User;
 import by.bsuir.cinema.exception.ProjectException;
+import by.bsuir.cinema.jframe.admin.AdminMenuFrame;
 import by.bsuir.cinema.logic.UserLogic;
-import by.bsuir.cinema.jframe.UserMenuFrame;
+import by.bsuir.cinema.jframe.client.UserMenuFrame;
 import by.bsuir.cinema.util.Encryption;
 import by.bsuir.cinema.util.constant.ConstantMessages;
 import javax.swing.*;
 
-public class Controller {
+public class Starter {
     private static final int X = 650;
     private static final int Y = 300;
     private static final int WIDTH = 1000;
@@ -26,13 +27,13 @@ public class Controller {
     public static void main(String[] args) {
         JFrame authorizationFrame = new JFrame(ConstantMessages.AUTH);
         authorizationFrame.setBounds(X, Y, WIDTH, HEIGHT);
-        authorizationFrame.setContentPane(new Controller(authorizationFrame).authorizationPanel);
+        authorizationFrame.setContentPane(new Starter(authorizationFrame).authorizationPanel);
         authorizationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         authorizationFrame.pack();
         authorizationFrame.setVisible(true);
     }
 
-    public Controller(JFrame authorizationFrame) {
+    public Starter(JFrame authorizationFrame) {
         signIn.addActionListener(e -> {
             try {
                 user = UserLogic.findUser(loginText.getText(), Encryption.encryptPassword(passwordField.getText()));
@@ -40,7 +41,7 @@ public class Controller {
                     switch (user.getType()) {
                         case ADMIN:
                             authorizationFrame.dispose();
-                            //openAdminMenu();
+                            openAdminMenu();
                             break;
                         case CLIENT:
                             authorizationFrame.dispose();
@@ -61,15 +62,15 @@ public class Controller {
         });
     }
 
-    /*private void openAdminMenu() {
+    private void openAdminMenu() {
         JFrame frame = new JFrame("Меню администратора");
         frame.setBounds(650, 300, 15000, 300);
         frame.setContentPane(new AdminMenuFrame(frame).adminMenu);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        new Thread(new AdminMenu(frame)).start();
-    }*/
+        //new Thread(new AdminMenu(frame)).start();
+    }
 
     private void openUserMenu() {
         JFrame frame = new JFrame("Меню пользователя");

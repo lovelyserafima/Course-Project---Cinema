@@ -1,4 +1,4 @@
-package by.bsuir.cinema.jframe;
+package by.bsuir.cinema.jframe.client;
 
 import by.bsuir.cinema.entity.user.Client;
 import by.bsuir.cinema.exception.ProjectException;
@@ -6,13 +6,13 @@ import by.bsuir.cinema.logic.BasketLogic;
 
 import javax.swing.*;
 
-import static by.bsuir.cinema.controller.Controller.user;
+import static by.bsuir.cinema.controller.Starter.user;
 
 public class BasketFrame {
     private JTextArea orders;
     public JPanel getPanel;
     public JFrame frame;
-    private JLabel yourOrders;
+    private JLabel films;
     private JButton back;
     private JButton buyTicket;
     private JTextField sessionId;

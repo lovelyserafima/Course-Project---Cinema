@@ -1,10 +1,11 @@
-package by.bsuir.cinema.jframe;
+package by.bsuir.cinema.jframe.client;
 
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.BasketLogic;
 import by.bsuir.cinema.logic.SessionLogic;
-import static by.bsuir.cinema.controller.Controller.user;
+import static by.bsuir.cinema.controller.Starter.user;
 import javax.swing.*;
+import java.awt.*;
 import java.io.ObjectOutputStream;
 
 public class AfficheFrame {
@@ -12,18 +13,15 @@ public class AfficheFrame {
     public JFrame frame;
     private JLabel ourSessions;
     private JButton back;
-    //private JTextArea Tickets;
-    private JButton addToBasket;
     private JTextArea textArea1;
+    private JButton addToBasket;
     private JTextField sessionId;
-    private JTextField sessions;
+    private JScrollPane jSc;
     static private ObjectOutputStream output;
 
     public AfficheFrame(JFrame frame) throws ProjectException {
         //JFrame
         this.frame = frame;
-        textArea1.removeAll();
-        textArea1.append(SessionLogic.findAllSessions());
         addToBasket.addActionListener(e -> {
             try {
                 boolean flag = BasketLogic.addToBasket(user.getId(), Integer.parseInt(sessionId.getText()));
@@ -52,5 +50,13 @@ public class AfficheFrame {
         newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         newFrame.pack();
         newFrame.setVisible(true);
+    }
+
+    private void createUIComponents() throws ProjectException {
+        // TODO: place custom component creation code here
+        textArea1 = new JTextArea(30, 30);
+        textArea1.append(SessionLogic.findAllSessions());
+        jSc = new JScrollPane(textArea1);
+        this.frame.getContentPane().add(jSc, BorderLayout.CENTER);
     }
 }

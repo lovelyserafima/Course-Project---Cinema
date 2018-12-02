@@ -81,22 +81,5 @@ public class BasketLogic {
         }
         return newBalance;
     }
-
-    public static boolean cancelOrder(int userId, int sessionId) throws ProjectException {
-        DaoManager daoManager = new DaoManager();
-        BasketDao basketDao = new BasketDao();
-        boolean flag;
-        try{
-            daoManager.startDAO(basketDao);
-            flag = basketDao.deleteFromBasket(userId, sessionId);
-            daoManager.commit();
-        } catch (ProjectException e) {
-            daoManager.rollback();
-            throw e;
-        } finally {
-            daoManager.endDAO();
-        }
-        return flag;
-    }
 }
 
