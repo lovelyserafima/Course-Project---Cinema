@@ -1,11 +1,14 @@
 package by.bsuir.cinema.jframe.admin;
 
+import static by.bsuir.cinema.controller.Starter.user;
+
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.FilmLogic;
-import by.bsuir.cinema.logic.SessionLogic;
 
 import javax.swing.*;
-import java.awt.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class FilmsFrame {
     private JTextArea filmsValue;
@@ -16,8 +19,11 @@ public class FilmsFrame {
     private JButton deleteFilm;
     private JScrollPane jSc;
     public JFrame jFrame;
+    private DataOutputStream output;
 
-    public FilmsFrame(JFrame frame) throws ProjectException {
+    public FilmsFrame(JFrame frame, DataOutputStream output) throws ProjectException {
+        this.output = output;
+
         jFrame = frame;
         filmsValue.append(FilmLogic.findAllFilms());
 
@@ -26,11 +32,14 @@ public class FilmsFrame {
             try {
                 if (FilmLogic.deleteFilmById(integerFilmId)){
                     JOptionPane.showMessageDialog(null, "Фильм был успешно удален");
+                    this.output.writeUTF(user.toString() + "deleted film with id = " + integerFilmId);
                 } else {
                     JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
                 }
             } catch (ProjectException e1) {
                 JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         });
 
@@ -43,7 +52,7 @@ public class FilmsFrame {
     private void openAdminUserMenu(){
         JFrame frame = new JFrame("Меню администратора");
         frame.setBounds(650, 300, 15000, 300);
-        frame.setContentPane(new AdminMenuFrame(frame).adminMenu);
+        frame.setContentPane(new AdminMenuFrame(frame, output).adminMenu);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

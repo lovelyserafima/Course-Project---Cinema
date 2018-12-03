@@ -1,31 +1,37 @@
 package by.bsuir.cinema.controller;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
 
 public class Controller implements Runnable{
     private static ServerSocket server;
     private static Socket connection;
-    private static ObjectOutputStream output;
-    private static ObjectInputStream input;
+    private static InputStream input;
+    private final Object lock = new Object();
 
-    public static void main(String[] args) {
-        new Thread(new Controller()).start();
+    public static void main(String[] args) throws IOException {
+        server = new ServerSocket(5678, 10);
+        for (int i = 0; i < 10; i++){
+            new Thread(new Controller()).start();
+        }
     }
 
     @Override
     public void run() {
         try {
-            server = new ServerSocket(3600, 10);
+            FileWriter fileWriter = new FileWriter("out.txt", true);
+            connection = server.accept();
             while (true) {
-                connection = server.accept();
-                output = new ObjectOutputStream(connection.getOutputStream());
-                input = new ObjectInputStream(connection.getInputStream());
-                output.flush();
+                input = connection.getInputStream();
+                DataInputStream dataInputStream = new DataInputStream(input);
+                String string = dataInputStream.readUTF();
+                synchronized (lock) {
+                    fileWriter.write(string + " " + LocalDateTime.now() + "\n");
+                }
+                fileWriter.flush();
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();

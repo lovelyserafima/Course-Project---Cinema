@@ -3,17 +3,13 @@ package by.bsuir.cinema.jframe.client;
 import by.bsuir.cinema.entity.user.Client;
 import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.UserLogic;
-
 import javax.swing.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
 import static by.bsuir.cinema.controller.Starter.user;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.math.BigDecimal;
-import java.net.Socket;
-
-public class UserMenuFrame {
+public class UserMenuFrame implements Runnable {
     public JPanel userMenu;
     private JButton affiche;
     private JButton basket;
@@ -23,12 +19,11 @@ public class UserMenuFrame {
     private JButton topUp;
     private JTextField balance;
     public JFrame frame;
-    static private Socket connection;
-    static private ObjectOutputStream output;
-    static private ObjectInputStream input;
+    private DataOutputStream output;
 
-    public UserMenuFrame(JFrame frame) {
+    public UserMenuFrame(JFrame frame, DataOutputStream dataOutputStream) {
         this.frame=frame;
+        this.output = dataOutputStream;
         balance.setText("Ваш баланс = " + ((Client) user).getMoney());
         affiche.addActionListener(e -> {
             try {
@@ -60,43 +55,39 @@ public class UserMenuFrame {
                         (Client) user);
                 if (flag){
                     JOptionPane.showMessageDialog(null, "Баланс был успешно пополнен");
-                    openUserMenu(this.frame);
+                    output.writeUTF(user.toString() + "пополнил себе баланс на " + value.getText());
+                    this.frame.dispose();
+                    openUserMenu();
                 } else {
                     JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
+                    output.writeUTF(user.toString() + "неудачно пополнил себе баланс на " + value.getText());
                 }
             } catch (ProjectException e1) {
                 JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
 
         });
 
-
         exit.addActionListener(e -> {
-            /*try {
-                connection.close();
+            frame.dispose();
+            try {
+                this.output.writeUTF(user.toString() + " вышел из приложения");
             } catch (IOException e1) {
                 e1.printStackTrace();
-            }*/
-            frame.dispose();
+            }
         });
     }
 
-
-
-    public void sendData(Object info) {
-        try {
-            output.flush();
-            output.writeObject(info);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public UserMenuFrame(DataOutputStream dataOutputStream) {
+        this.output = dataOutputStream;
     }
 
     private void openAffice() throws ProjectException {
         JFrame ticketFrame = new JFrame("Покупка билета");
         ticketFrame.setBounds(650, 300, 15000, 300);
-        ticketFrame.setContentPane(new AfficheFrame(ticketFrame).getPanel);
+        ticketFrame.setContentPane(new AfficheFrame(ticketFrame, output).getPanel);
         ticketFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ticketFrame.pack();
         ticketFrame.setVisible(true);
@@ -105,7 +96,7 @@ public class UserMenuFrame {
     private void showBasket() throws ProjectException {
         JFrame basketFrame = new JFrame("Корзина");
         basketFrame.setBounds(650, 300, 1000, 300);
-        basketFrame.setContentPane(new BasketFrame(basketFrame).getPanel);
+        basketFrame.setContentPane(new BasketFrame(basketFrame, output).getPanel);
         basketFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         basketFrame.pack();
         basketFrame.setVisible(true);
@@ -115,40 +106,39 @@ public class UserMenuFrame {
     private void showTickets(){
         JFrame ticketFrame = new JFrame("Билеты");
         ticketFrame.setBounds(650, 300, 1000, 300);
-        ticketFrame.setContentPane(new TicketsFrame(ticketFrame).getPanel);
+        ticketFrame.setContentPane(new TicketsFrame(ticketFrame, output).getPanel);
         ticketFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ticketFrame.pack();
         ticketFrame.setVisible(true);
         frame.setVisible(false);
     }
 
-    private void openUserMenu(JFrame frame) {
+    private void openUserMenu() {
         JFrame newFrame = new JFrame("Меню пользователя");
         newFrame.setBounds(650, 300, 15000, 300);
-        newFrame.setContentPane(new UserMenuFrame(newFrame).userMenu);
+        newFrame.setContentPane(new UserMenuFrame(newFrame, output).userMenu);
         newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         newFrame.pack();
         newFrame.setVisible(true);
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
-
-
-
-    /*@Override
+    /**
+     * When an object implementing interface <code>Runnable</code> is used
+     * to create a thread, starting the thread causes the object's
+     * <code>run</code> method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method <code>run</code> is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
     public void run() {
-        Printer printer = new Printer();
         try {
-            while (true) {
-                connection = new Socket(InetAddress.getByName("127.0.0.1"), 5678);
-                output = new ObjectOutputStream(connection.getOutputStream());
-                input = new ObjectInputStream(connection.getInputStream());
-                printer.print((String) input.readObject());
-            }
-        } catch (IOException | ClassNotFoundException e) {
+            this.output.writeUTF(user.toString() + " подключился");
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 }

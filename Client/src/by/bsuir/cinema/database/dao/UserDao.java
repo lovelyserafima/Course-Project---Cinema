@@ -17,6 +17,9 @@ public class UserDao extends AbstractDao {
     private static final String FIND_SESSION_PRICE = "select price from Session join Basket on session_id = id where " +
             "session_id = ?";
     private static final String UPDATE_CLIENT_MONEY = "update Client set cash = ? where user_id = ?";
+    private static final String FIND_ID_BY_LOGIN = "select id from User where login = ?";
+    private static final String INSERT_USER = "insert into User(login, password, role) values(?, ?, 'client')";
+    private static final String INSERT_CLIENT = "insert into Client(user_id, cash) values(?, ?)";
 
     public User findUserByLoginAndPassword(String login, String password) throws ProjectException {
         PreparedStatement preparedStatement = null;
@@ -93,5 +96,49 @@ public class UserDao extends AbstractDao {
             }
         }
         return newBalance;
+    }
+
+    public boolean isLoginExists(String login) throws ProjectException {
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(FIND_ID_BY_LOGIN);
+            preparedStatement.setString(1, login);
+            return preparedStatement.executeQuery().next();
+        } catch (SQLException e) {
+            throw new ProjectException("SQLException, e", e);
+        } finally {
+            if (connection != null){
+                close(preparedStatement);
+            }
+        }
+    }
+
+    public Client insertClient(String login, String password) throws ProjectException {
+        PreparedStatement preparedStatement = null;
+        try{
+            preparedStatement = connection.prepareStatement(INSERT_USER);
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+            preparedStatement.executeUpdate();
+            preparedStatement = connection.prepareStatement(FIND_ID_BY_LOGIN);
+            preparedStatement.setString(1, login);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                int insertedId = resultSet.getInt(1);
+                preparedStatement = connection.prepareStatement(INSERT_CLIENT);
+                preparedStatement.setInt(1, insertedId);
+                preparedStatement.setBigDecimal(2, BigDecimal.valueOf(500.0));
+                preparedStatement.executeUpdate();
+                return new Client(insertedId, login, BigDecimal.valueOf(500.0));
+            }
+
+        } catch (SQLException e) {
+            throw new ProjectException("SQLException, ", e);
+        } finally {
+            if (connection != null){
+                close(preparedStatement);
+            }
+        }
+        return null;
     }
 }

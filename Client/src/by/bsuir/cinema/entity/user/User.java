@@ -15,6 +15,12 @@ public class User extends Entity {
         this.type = type;
     }
 
+    public User(int insertedId, String login) {
+        super(insertedId);
+        this.login = login;
+        type = TypeUser.CLIENT;
+    }
+
     public String getLogin() {
         return login;
     }

@@ -15,6 +15,11 @@ public class Client extends User {
         this.money = money;
     }
 
+    public Client(int insertedId, String login, BigDecimal bigDecimal) {
+        super(insertedId, login);
+        this.money = bigDecimal;
+    }
+
     public BigDecimal getMoney() {
         return money;
     }
@@ -40,8 +45,8 @@ public class Client extends User {
 
     @Override
     public String toString() {
-        return "Client{" +
-                "money=" + money +
+        return "Client{id = " + getId() +
+                ", login = " + getLogin() + "money = " + money +
                 '}';
     }
 }

@@ -4,6 +4,11 @@ import by.bsuir.cinema.exception.ProjectException;
 import by.bsuir.cinema.logic.SessionLogic;
 
 import javax.swing.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static by.bsuir.cinema.controller.Starter.user;
 
 public class AdminAfficheFrame {
     public JPanel getPanel;
@@ -14,9 +19,11 @@ public class AdminAfficheFrame {
     private JScrollPane jSc;
     private JTextArea sessionsValue;
     public JFrame jFrame;
+    private DataOutputStream output;
 
-    public AdminAfficheFrame(JFrame jFrame) throws ProjectException {
+    public AdminAfficheFrame(JFrame jFrame, DataOutputStream outputStream) throws ProjectException {
         this.jFrame = jFrame;
+        this.output = outputStream;
 
         sessionsValue.append(SessionLogic.findAllSessions());
 
@@ -25,11 +32,15 @@ public class AdminAfficheFrame {
             try {
                 if (SessionLogic.deleteFromSession(integerSessionId)){
                     JOptionPane.showMessageDialog(null, "Сеанс был успешно удален");
+                    this.output.writeUTF(user.toString() + "удалил фильм с ид = " + integerSessionId);
                 } else {
                     JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
+                    this.output.writeUTF(user.toString() + "неудачно удалил фильм с ид = " + integerSessionId);
                 }
             } catch (ProjectException e1) {
                 JOptionPane.showMessageDialog(null, "Упс, что-то пошло не так:(");
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         });
 
@@ -42,7 +53,7 @@ public class AdminAfficheFrame {
     private void opedAdminUserMenu() {
         JFrame frame = new JFrame("Меню администратора");
         frame.setBounds(650, 300, 15000, 300);
-        frame.setContentPane(new AdminMenuFrame(frame).adminMenu);
+        frame.setContentPane(new AdminMenuFrame(frame, output).adminMenu);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

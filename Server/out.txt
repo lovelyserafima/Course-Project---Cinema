@@ -1,0 +1,23 @@
+User{login='artyom', type=ADMIN}connected 2018-12-02T20:15:27.679
+User{login='artyom', type=ADMIN}connected 2018-12-02T20:17:44.782
+User{login='artyom', type=ADMIN}connected 2018-12-02T20:23:04.613
+User{login='artyom', type=ADMIN} добавил новый фильм: newFilm, action, producer, mainRole 2018-12-02T20:23:25.558
+User{login='artyom', type=ADMIN} добавил новый сеанс: newFilm, 2018-12-03, 600 2018-12-02T20:24:29.011
+User{login='artyom', type=ADMIN}deleted film with id = 28 2018-12-02T20:24:56.693
+User{login='artyom', type=ADMIN}удалил фильм с ид = 26 2018-12-02T20:25:41.535
+User{login='artyom', type=ADMIN}connected 2018-12-02T20:30:50.157
+Client{money=500}connected 2018-12-03T21:27:16.345
+Client{money=600.0}пополнил себе баланс на 100 2018-12-03T21:27:35.392
+Client{money=600}connected 2018-12-03T21:29:55.328
+Client{money=750.0}пополнил себе баланс на 150 2018-12-03T21:30:31.846
+Client{money=800.0}пополнил себе баланс на 50 2018-12-03T21:33:14.620
+Client{money=800} подключился 2018-12-03T21:38:33.644
+Client{money=800} подключился 2018-12-03T21:41:33.478
+User{login='artyom', type=ADMIN}connected 2018-12-03T21:45:31.618
+User{login='artyom', type=ADMIN}connected 2018-12-03T21:47:38.556
+User{login='artyom', type=ADMIN}connected 2018-12-03T22:02:50.142
+Client{money=800} подключился 2018-12-03T22:03:09.410
+Client{money=500.0} зарегистрировался 2018-12-03T23:06:24.569
+User{login='arthur', type=ADMIN} подключился 2018-12-03T23:07:07.214
+Client{money=500.0} зарегистрировался 2018-12-03T23:08:40.935
+Client{money=500} подключился 2018-12-03T23:08:55.988

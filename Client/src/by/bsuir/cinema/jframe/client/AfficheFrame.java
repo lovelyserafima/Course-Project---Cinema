@@ -6,6 +6,8 @@ import by.bsuir.cinema.logic.SessionLogic;
 import static by.bsuir.cinema.controller.Starter.user;
 import javax.swing.*;
 import java.awt.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 public class AfficheFrame {
@@ -17,22 +19,32 @@ public class AfficheFrame {
     private JButton addToBasket;
     private JTextField sessionId;
     private JScrollPane jSc;
-    static private ObjectOutputStream output;
+    private DataOutputStream output;
 
-    public AfficheFrame(JFrame frame) throws ProjectException {
+    public AfficheFrame(JFrame frame, DataOutputStream output) throws ProjectException {
         //JFrame
         this.frame = frame;
+        this.output = output;
+
+        textArea1.append(SessionLogic.findAllSessions());
+
         addToBasket.addActionListener(e -> {
             try {
                 boolean flag = BasketLogic.addToBasket(user.getId(), Integer.parseInt(sessionId.getText()));
                 if (flag){
                     JOptionPane.showMessageDialog(null,
                             "Билет был успешно добавлен в корзину");
+                    output.writeUTF(user.toString() + " добавил себе билет в корзину с ид = " +
+                            Integer.parseInt(sessionId.getText()));
                 } else {
                     JOptionPane.showMessageDialog(null,
                             "Упс, что-то пошло не так");
+                    output.writeUTF(user.toString() + " неудачно добавил себе билет в корзину с ид = " +
+                            Integer.parseInt(sessionId.getText()));
                 }
             } catch (ProjectException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
                 e1.printStackTrace();
             }
         });
@@ -46,17 +58,9 @@ public class AfficheFrame {
     private void openUserMenu(JFrame frame) {
         JFrame newFrame = new JFrame("Меню пользователя");
         newFrame.setBounds(650, 300, 15000, 300);
-        newFrame.setContentPane(new UserMenuFrame(newFrame).userMenu);
+        newFrame.setContentPane(new UserMenuFrame(newFrame, output).userMenu);
         newFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         newFrame.pack();
         newFrame.setVisible(true);
-    }
-
-    private void createUIComponents() throws ProjectException {
-        // TODO: place custom component creation code here
-        textArea1 = new JTextArea(30, 30);
-        textArea1.append(SessionLogic.findAllSessions());
-        jSc = new JScrollPane(textArea1);
-        this.frame.getContentPane().add(jSc, BorderLayout.CENTER);
     }
 }

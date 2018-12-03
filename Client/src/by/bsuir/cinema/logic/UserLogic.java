@@ -36,4 +36,33 @@ public class UserLogic {
         }
         return flag;
     }
+
+    public static boolean isLoginExists(String login) throws ProjectException {
+        DaoManager daoManager = new DaoManager();
+        UserDao userDao = new UserDao();
+        try{
+            daoManager.startDAO(userDao);
+            return userDao.isLoginExists(login);
+        } finally {
+            daoManager.endDAO();
+        }
+    }
+
+    public static Client registerNewClient(String login, String password) throws ProjectException {
+        DaoManager daoManager = new DaoManager();
+        UserDao userDao = new UserDao();
+        try{
+            daoManager.startDAO(userDao);
+            Client user = userDao.insertClient(login, password);
+            if (user != null){
+                daoManager.commit();
+            }
+            return user;
+        } catch (ProjectException e) {
+            daoManager.rollback();
+            throw e;
+        } finally {
+            daoManager.endDAO();
+        }
+    }
 }
